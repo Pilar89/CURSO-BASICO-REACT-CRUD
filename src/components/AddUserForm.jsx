@@ -1,14 +1,31 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import AlertModal from "./AlertModal";
+import { useState } from "react";
 
 const AddUserForm = (props) => {
   const { register, errors, handleSubmit } = useForm();
+  const [showModal, setShowModal] = useState(false);
+  const [userNAme, setUserNAme] = useState("");
 
   const onSubmit = (data, e) => {
     data.id = null;
+    if (isSameUserName(data.username) === false) {
+      props.addUser(data);
+      e.target.reset();
+      return;
+    }
+    setShowModal(true);
+    setUserNAme(data.username);
+  };
 
-    props.addUser(data);
-    e.target.reset();
+  const isSameUserName = (userName) => {
+    return props.users.some((user) => {
+      if (user.username === userName) {
+        return true;
+      }
+      return false;
+    });
   };
 
   return (
@@ -32,6 +49,13 @@ const AddUserForm = (props) => {
       />
       <div>{errors?.username?.message}</div>
       <button type="submit">Add new user</button>
+      <AlertModal
+        show={showModal}
+        username={userNAme}
+        onHandleClose={() => {
+          setShowModal(false);
+        }}
+      />
     </form>
   );
 };

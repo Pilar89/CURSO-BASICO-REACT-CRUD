@@ -5,26 +5,21 @@ import { v4 as uuidv4 } from "uuid";
 import EdiUserForm from "./components/EditUserForm";
 
 function App() {
-  // permite agregar los usuarios
-  const usersData = [
-    { id: uuidv4(), name: "Tania", username: "floppydiskette" },
-    { id: uuidv4(), name: "Craig", username: "siliconeidolon" },
-    { id: uuidv4(), name: "Ben", username: "benisphere" },
-  ];
-
-  const [users, setUsers] = useState(usersData);
+  
+  let localStorageuser = localStorage.getItem("user");
+  let parseUsers = JSON.parse(localStorageuser);
+  const [users, setUsers] = useState(parseUsers);
+  localStorage.setItem("user", JSON.stringify(users));
 
   const addUser = (user) => {
     user.id = uuidv4();
     setUsers([...users, user]);
   };
 
-  // permite eliminar usuario
   const deleteUser = (id) => {
     setUsers(users.filter((user) => user.id !== id));
   };
 
-  //Permite editar usuario
   const [editing, setEditing] = useState(false);
 
   const initialFormState = { id: null, name: "", username: "" };
@@ -42,7 +37,8 @@ function App() {
 
   return (
     <div className="container">
-      <h1>CRUD App with Hooks</h1>
+      <h1 className="mt-5">CRUD App with Hooks</h1>
+      <hr />
       <div className="flex-row">
         <div className="flex-large">
           {editing ? (
@@ -57,7 +53,8 @@ function App() {
           ) : (
             <div>
               <h2>Add user</h2>
-              <AddUserForm addUser={addUser} />
+              {/* {console.log("localStorage: " + localStorage.getItem("user"))} */}
+              <AddUserForm addUser={addUser} users={users} />
             </div>
           )}
         </div>
